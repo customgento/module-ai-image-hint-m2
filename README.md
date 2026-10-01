@@ -12,7 +12,7 @@ bin/magento module:enable CustomGento_AiImageLabel
 bin/magento setup:upgrade
 ```
 
-Requires PHP 8.2 - 8.4 and Magento 2.4.
+Requires PHP 8.2 - 8.5 and Magento 2.4.
 
 ## Usage
 
