@@ -53,9 +53,15 @@ minicart (Knockout in Luma, Alpine in Hyvä) are drawn in the browser. For those
   configurable product, which the gallery switches to when an option or swatch is picked.
 - `Plugin\AddAiLabelToCartItemDataPlugin` adds an `ai_image_label` entry to each item of the `cart`
   customer data section.
+- `Plugin\AddAiLabelToSwatchMediaPlugin` adds an `ai_image_label` map to the `swatches/ajax/media`
+  response, which both Luma and Hyvä fetch when a swatch is picked on a category or search page, to
+  swap the tile image to the child's. On a page filtered by a swatch attribute in layered navigation,
+  where the tile shows the matching child's image right away, `Plugin\AddAiLabelToListingSwatchesPlugin`
+  prints those labels as a data block next to the swatches.
 - `view/frontend/web/js/ai-image-label.js`, plain JavaScript without RequireJS or Alpine, puts the
-  icon next to every `<img>` whose `src` is in either list, and moves or removes it when the theme
-  swaps an image. Core's gallery placeholder image (`.gallery-placeholder__image`) is skipped, since
+  icon next to every `<img>` whose `src` is in any of these lists, and moves or removes it when the
+  theme swaps an image. A server rendered icon is hidden while its image is swapped out, e.g. by a
+  listing swatch, and shown again when the image comes back. Core's gallery placeholder image (`.gallery-placeholder__image`) is skipped, since
   it only gets hidden once the gallery has loaded, so the icon appears with the gallery itself.
   Likewise, when a theme keeps its own server rendered copy of an image under the gallery, only the
   visible copy on top (later in the DOM) gets the icon, so it is never shown twice.

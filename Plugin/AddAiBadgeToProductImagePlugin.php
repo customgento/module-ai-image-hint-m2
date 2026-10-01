@@ -46,7 +46,7 @@ class AddAiBadgeToProductImagePlugin
             return $result;
         }
 
-        return '<span class="ai-image-label-wrapper">' . $result . $this->labelProvider->getBadgeHtml($label)
-            . '</span>';
+        return '<span class="ai-image-label-wrapper">' . $result
+            . $this->labelProvider->getBadgeHtml($label, (string)$subject->getImageUrl()) . '</span>';
     }
 }

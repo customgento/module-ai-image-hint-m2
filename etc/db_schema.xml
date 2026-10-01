@@ -3,7 +3,7 @@
     <table name="catalog_product_entity_media_gallery">
         <column xsi:type="smallint" name="ai_content" unsigned="true" nullable="false" identity="false"
                 default="0" comment="EU AI Act label: 0 = none, 1 = AI generated, 2 = AI modified"/>
-        <column xsi:type="varchar" name="ai_label_color" nullable="true" length="8" onCreate="migrateDataFrom(ai_hint_color)"
+        <column xsi:type="varchar" name="ai_label_color" nullable="true" length="8"
                 comment="EU AI Act label icon color: black or white"/>
         <index referenceId="CATALOG_PRODUCT_ENTITY_MEDIA_GALLERY_VALUE" indexType="btree">
             <column name="value"/>

@@ -35,6 +35,17 @@ class AddAiLabelToGalleryJsonPluginTest extends TestCase
         $this->assertSame('icon-full', $images[0]['aiIcon']);
     }
 
+    public function testLabelIsMatchedWhenTheImageUrlAlreadyHasAQuery(): void
+    {
+        $url = self::URL . '?v=1';
+        $images = json_decode($this->plugin()->afterGetGalleryImagesJson(
+            $this->block(AiContent::GENERATED, $url),
+            (string)json_encode([['full' => $url . '?___store=de', 'caption' => 'Ring']])
+        ), true);
+
+        $this->assertSame('icon-full', $images[0]['aiIcon']);
+    }
+
     /**
      * The JSON is printed raw inside a <script> element, so the escaped slashes core emits are the
      * only thing stopping an alt text from closing that element.
@@ -55,7 +66,40 @@ class AddAiLabelToGalleryJsonPluginTest extends TestCase
         $this->assertSame((string)json_encode([['full' => self::URL, 'caption' => 'Ring']]), $result);
     }
 
+    public function testOnlyTheBlockThatPrintedTheGalleryJsonGetsTheBadgeMap(): void
+    {
+        $plugin = $this->plugin();
+        $gallery = $this->block();
+        $plugin->afterGetGalleryImagesJson($gallery, (string)json_encode([['full' => self::URL]]));
+
+        $this->assertSame('<div/><map/>', $plugin->afterFetchView($gallery, '<div/>'));
+        // e.g. Magento_ProductVideo's video block, whose template never prints the gallery JSON
+        $this->assertSame('<div/>', $plugin->afterFetchView($this->block(), '<div/>'));
+    }
+
+    /**
+     * Hyvä's gallery template calls getGalleryImagesJson() twice.
+     */
+    public function testTheSameGalleryJsonIsLabelledOnce(): void
+    {
+        $block = $this->createMock(Gallery::class);
+        $block->expects($this->once())->method('getGalleryImages')->willReturn([
+            new DataObject(['large_image_url' => self::URL, 'ai_content' => AiContent::GENERATED]),
+        ]);
+        $plugin = $this->plugin();
+        $json = (string)json_encode([['full' => self::URL]]);
+
+        $first = $plugin->afterGetGalleryImagesJson($block, $json);
+
+        $this->assertSame($first, $plugin->afterGetGalleryImagesJson($block, $json));
+    }
+
     private function encode(array $images, int $aiContent = AiContent::GENERATED): string
+    {
+        return $this->plugin()->afterGetGalleryImagesJson($this->block($aiContent), (string)json_encode($images));
+    }
+
+    private function plugin(): AddAiLabelToGalleryJsonPlugin
     {
         $labelProvider = $this->createStub(LabelProvider::class);
         $labelProvider->method('getLabel')->willReturnCallback(
@@ -64,13 +108,18 @@ class AddAiLabelToGalleryJsonPluginTest extends TestCase
                 : ['type' => $type, 'color' => 'black', 'alt' => 'AI']
         );
         $labelProvider->method('getIconUrls')->willReturn(['full' => 'icon-full', 'mark' => 'icon-mark']);
+        $labelProvider->method('getBadgeMapHtml')->willReturn('<map/>');
 
+        return new AddAiLabelToGalleryJsonPlugin($labelProvider);
+    }
+
+    private function block(int $aiContent = AiContent::GENERATED, string $largeImageUrl = self::URL): Gallery
+    {
         $block = $this->createStub(Gallery::class);
         $block->method('getGalleryImages')->willReturn([
-            new DataObject(['large_image_url' => self::URL, 'ai_content' => $aiContent]),
+            new DataObject(['large_image_url' => $largeImageUrl, 'ai_content' => $aiContent]),
         ]);
 
-        return (new AddAiLabelToGalleryJsonPlugin($labelProvider))
-            ->afterGetGalleryImagesJson($block, (string)json_encode($images));
+        return $block;
     }
 }

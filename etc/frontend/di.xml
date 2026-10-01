@@ -12,6 +12,14 @@
         <plugin name="customgento_ai_image_label_product_image"
                 type="CustomGento\AiImageLabel\Plugin\AddAiBadgeToProductImagePlugin"/>
     </type>
+    <type name="Magento\Swatches\Block\Product\Renderer\Listing\Configurable">
+        <plugin name="customgento_ai_image_label_listing_swatches"
+                type="CustomGento\AiImageLabel\Plugin\AddAiLabelToListingSwatchesPlugin"/>
+    </type>
+    <type name="Magento\Swatches\Helper\Data">
+        <plugin name="customgento_ai_image_label_swatch_media"
+                type="CustomGento\AiImageLabel\Plugin\AddAiLabelToSwatchMediaPlugin"/>
+    </type>
     <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
         <plugin name="customgento_ai_image_label_configurable_images"
                 type="CustomGento\AiImageLabel\Plugin\AddAiLabelToConfigurableImagesPlugin"/>

@@ -2,7 +2,8 @@
 /**
  * Copy of Magento_ProductVideo::helper/gallery.phtml (module-product-video 100.4.9) with the EU AI
  * Act label fields added. It stays in the module because there is no adminhtml theme to override it
- * from. On a Magento upgrade, re-diff it against the original and port whatever changed.
+ * from. On a Magento upgrade, re-diff it against the original and port whatever changed. Besides the
+ * AI fields, $showUseDefault is gated so the copy also works on 2.4.7/2.4.8, see below.
  *
  * Copyright 2015 Adobe
  * All Rights Reserved.
@@ -18,7 +19,10 @@ $elementNameEscaped = $escaper->escapeHtmlAttr($block->getElement()->getName()) 
 $formNameEscaped = $escaper->escapeHtmlAttr($block->getFormName());
 $blockIdEscaped = $escaper->escapeHtmlAttr($block->getHtmlId());
 $isEditEnabled = $block->isEditEnabled();
-$showUseDefault = $block->hasUseDefault();
+// AI label change: the "Use Default Value" controls of 100.4.9 only work with module-catalog 104.0.9, which
+// added their JS and their saving (DefaultValueProcessor). On older versions they would be silently ignored.
+$showUseDefault = $block->hasUseDefault()
+    && class_exists(\Magento\Catalog\Model\Product\Gallery\DefaultValueProcessor::class);
 $imagesJson = $block->getImagesJson();
 /** @var \Magento\Framework\Json\Helper\Data $jsonHelper */
 $jsonHelper = $block->getData('jsonHelper');

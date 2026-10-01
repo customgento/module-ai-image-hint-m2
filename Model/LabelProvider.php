@@ -96,16 +96,20 @@ class LabelProvider
 
     /**
      * The small AI mark as an <img> tag, for server rendered product images.
+     *
+     * The url of the image it labels goes along as data-image, so ai-image-label.js can hide the mark
+     * while a theme script (e.g. a listing swatch) shows another image in its place.
      */
-    public function getBadgeHtml(array $label): string
+    public function getBadgeHtml(array $label, string $imageUrl): string
     {
         $alt = $this->escaper->escapeHtmlAttr($label['alt']);
 
         return sprintf(
-            '<img src="%s" alt="%s" title="%s" loading="lazy" class="ai-image-label"/>',
+            '<img src="%s" alt="%s" title="%s" loading="lazy" class="ai-image-label" data-image="%s"/>',
             $this->escaper->escapeUrl($this->iconUrl('ai-mark', $label['color'])),
             $alt,
-            $alt
+            $alt,
+            $this->escaper->escapeHtmlAttr($imageUrl)
         );
     }
 
@@ -137,6 +141,14 @@ class LabelProvider
             }
         }
 
+        return $this->getDataBlockHtml($map);
+    }
+
+    /**
+     * An image url => {icon, alt, size?} map as the data block ai-image-label.js reads, '' for an empty map.
+     */
+    public function getDataBlockHtml(array $map): string
+    {
         // a data block, not a script, so no CSP nonce is needed; the escaped slashes keep it closed
         return $map
             ? '<script type="application/json" class="ai-image-label-data">'

@@ -9,6 +9,7 @@
             <module name="Magento_ProductVideo"/>
             <module name="Magento_Quote"/>
             <module name="Magento_Store"/>
+            <module name="Magento_Swatches"/>
         </sequence>
     </module>
 </config>

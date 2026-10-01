@@ -8,6 +8,8 @@ use CustomGento\AiImageLabel\Model\LabelProvider;
 use Magento\Catalog\Model\Product;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
 use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
+use Magento\Swatches\Block\Product\Renderer\Listing\Configurable as ListingSwatches;
+use WeakMap;
 
 /**
  * Picking an option on a configurable product swaps the gallery to the child's images, which come from
@@ -15,21 +17,36 @@ use Magento\ConfigurableProduct\Block\Product\View\Type\Configurable;
  * for those child images too, so ai-image-label.js finds them the same way as the parent's.
  *
  * The urls are built the way core's ConfigurableProduct\Helper\Data::getGalleryImages() builds them for
- * that JSON, but only for labelled images. Also covers the swatch renderer, which extends this block.
+ * that JSON, but only for labelled images. Also covers the swatch renderer, which extends this block,
+ * but not its category/search listing variant: core sends no child gallery there, and the product page
+ * urls of this map would never match a listing image anyway.
+ *
+ * The product page renders both the options block and its swatch renderer for the same product, so the map
+ * is printed once per product.
  */
 class AddAiLabelToConfigurableImagesPlugin
 {
+    // configurable product => true once its map is printed
+    private WeakMap $printed;
+
     public function __construct(
         private readonly LabelProvider $labelProvider,
         private readonly UrlBuilder $urlBuilder,
     ) {
+        $this->printed = new WeakMap();
     }
 
     public function afterToHtml(Configurable $subject, string $result): string
     {
-        if ($result === '') {
+        $configurable = $subject->getProduct();
+        if ($result === ''
+            || $subject instanceof ListingSwatches
+            || !$configurable instanceof Product
+            || isset($this->printed[$configurable])
+        ) {
             return $result;
         }
+        $this->printed[$configurable] = true;
 
         $images = [];
         foreach ($subject->getAllowProducts() as $product) {
