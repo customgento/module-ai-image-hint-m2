@@ -17,7 +17,14 @@ class LabelProviderTest extends TestCase
     public function testTheBadgeMapCoversEveryUrlTheThemeMayRender(): void
     {
         $html = $this->labelProvider()->getBadgeMapHtml([
-            ['thumb' => 't.jpg', 'img' => 'i.jpg', 'full' => 'f.jpg', 'aiIcon' => 'icon', 'aiMark' => 'mark', 'aiAlt' => 'AI'],
+            [
+                'thumb' => 't.jpg',
+                'img' => 'i.jpg',
+                'full' => 'f.jpg',
+                'aiIcon' => 'icon',
+                'aiMark' => 'mark',
+                'aiAlt' => 'AI',
+            ],
             ['thumb' => 'x.jpg', 'img' => 'y.jpg', 'full' => 'z.jpg'],
         ]);
         preg_match('#<script type="application/json" class="ai-image-label-data">(.*)</script>#', $html, $match);

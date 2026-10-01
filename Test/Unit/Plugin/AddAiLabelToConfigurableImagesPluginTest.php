@@ -31,7 +31,9 @@ class AddAiLabelToConfigurableImagesPluginTest extends TestCase
 
         $labelProvider = $this->createMock(LabelProvider::class);
         $labelProvider->method('getLabel')->willReturnCallback(
-            static fn (int $type): ?array => $type === AiContent::NONE ? null : ['type' => $type, 'color' => 'black', 'alt' => 'AI']
+            static fn (int $type): ?array => $type === AiContent::NONE
+                ? null
+                : ['type' => $type, 'color' => 'black', 'alt' => 'AI']
         );
         $labelProvider->method('getIconUrls')->willReturn(['full' => 'icon-full', 'mark' => 'icon-mark']);
         $labelProvider->expects($this->once())->method('getBadgeMapHtml')->with([[

@@ -57,7 +57,9 @@ class AddAiLabelToGalleryJsonPlugin
      */
     public function afterToHtml(Gallery $subject, string $result): string
     {
-        return $result . $this->labelProvider->getBadgeMapHtml(json_decode($subject->getGalleryImagesJson(), true) ?: []);
+        $images = json_decode($subject->getGalleryImagesJson(), true) ?: [];
+
+        return $result . $this->labelProvider->getBadgeMapHtml($images);
     }
 
     /**

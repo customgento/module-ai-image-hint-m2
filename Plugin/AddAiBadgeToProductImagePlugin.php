@@ -25,9 +25,15 @@ class AddAiBadgeToProductImagePlugin
     }
 
     // ponytail: one indexed query per distinct file on a listing; preload per collection if uncached pages get slow
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterCreate(ImageFactory $subject, Image $result, Product $product, string $imageId): Image
     {
-        return $result->setData('ai_image_label', $this->labelProvider->getLabelForProductImage($product, $imageId));
+        return $result->setData(
+            'ai_image_label',
+            $this->labelProvider->getLabelForProductImage($product, $imageId)
+        );
     }
 
     /**
@@ -40,6 +46,7 @@ class AddAiBadgeToProductImagePlugin
             return $result;
         }
 
-        return '<span class="ai-image-label-wrapper">' . $result . $this->labelProvider->getBadgeHtml($label) . '</span>';
+        return '<span class="ai-image-label-wrapper">' . $result . $this->labelProvider->getBadgeHtml($label)
+            . '</span>';
     }
 }

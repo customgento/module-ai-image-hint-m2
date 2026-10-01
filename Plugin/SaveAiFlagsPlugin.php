@@ -25,6 +25,9 @@ class SaveAiFlagsPlugin
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterExecute(
         CreateHandler $subject,
         Product $result,

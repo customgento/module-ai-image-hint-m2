@@ -48,7 +48,10 @@ class AddAiLabelToConfigurableImagesPlugin
     {
         $images = [];
         foreach ($product->getMediaGalleryImages() as $image) {
-            $label = $this->labelProvider->getLabel((int)$image->getData('ai_content'), $image->getData('ai_label_color'));
+            $label = $this->labelProvider->getLabel(
+                (int)$image->getData('ai_content'),
+                $image->getData('ai_label_color')
+            );
             if (!$label) {
                 continue;
             }

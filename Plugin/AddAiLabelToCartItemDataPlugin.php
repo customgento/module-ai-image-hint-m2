@@ -26,6 +26,9 @@ class AddAiLabelToCartItemDataPlugin
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterGetItemData(ItemInterface $subject, array $result, Item $item): array
     {
         $product = $this->itemResolver->getFinalProduct($item);

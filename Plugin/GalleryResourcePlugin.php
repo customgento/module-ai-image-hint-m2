@@ -29,6 +29,8 @@ class GalleryResourcePlugin
     /**
      * Core copies value/media_type/disabled only, so a duplicated product would lose its AI labelling.
      * The result maps each original value_id to the value_id of its copy.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function afterDuplicate(Gallery $subject, array $result): array
     {
