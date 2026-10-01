@@ -1,0 +1,41 @@
+/*
+ * EU AI Act label icon, overlaid on a product image. Plain CSS so it works in any theme.
+ * The SVG viewBoxes are cropped to the artwork, so each height below is the visible icon height.
+ */
+.ai-image-label-wrapper {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+}
+
+/* set by ai-image-label.js on a static parent, so the badge has something to position against */
+.ai-image-label-host {
+    position: relative;
+}
+
+.ai-image-label {
+    position: absolute;
+    right: 0.5rem;
+    bottom: 0.5rem;
+    z-index: 10;
+    width: auto;
+    height: 1.25rem;
+}
+
+.ai-image-label--full {
+    right: 0.75rem;
+    bottom: 0.75rem;
+}
+
+.ai-image-label--thumb {
+    right: 0.125rem;
+    bottom: 0.125rem;
+    height: 0.875rem;
+}
+
+@media (min-width: 768px) {
+    .ai-image-label--full {
+        height: 1.5rem;
+    }
+}
