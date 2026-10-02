@@ -1,0 +1,7 @@
+<!-- Luma minicart thumbnail: core's template plus the badge, the data is the item's product_image -->
+<span class="ai-image-hint-wrap">
+    <!-- ko template: 'Magento_Catalog/product/image_with_borders' --><!-- /ko -->
+    <!-- ko with: $data.ai_image_hint -->
+    <img class="ai-image-hint" loading="lazy" data-bind="attr: {src: icon, alt: alt, title: alt}"/>
+    <!-- /ko -->
+</span>

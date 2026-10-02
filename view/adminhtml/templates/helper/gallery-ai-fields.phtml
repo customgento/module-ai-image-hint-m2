@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+use CustomGento\AiImageHint\Model\Source\AiContent;
+use CustomGento\AiImageHint\Model\Source\HintColor;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+
+/**
+ * The AI hint selects of the Image Detail modal, rendered inside core's underscore template of that modal, where
+ * `data` is the image. The labelling is stored per image, not per store view, which the note says: core's
+ * [data-config-scope] label is laid out for side by side forms and floats off in this stacked modal.
+ *
+ * @var Template $block
+ * @var Escaper $escaper
+ */
+
+$aiContentNoneJs = json_encode(AiContent::NONE);
+$aiHintColorDefaultJs = json_encode(HintColor::BLACK);
+?>
+<?php /* the gap above: 2.4.8's Role field brings it, 2.4.9's Role fieldset does not; the two margins collapse */ ?>
+<div class="admin__field field-ai-content" style="margin-top: 3rem;">
+    <label class="admin__field-label">
+        <span><?= $escaper->escapeHtml(__('AI labelling')) ?></span>
+    </label>
+    <div class="admin__field-control">
+        <select class="admin__control-select" data-role="ai-content" data-field="ai_content">
+            <?php foreach ($block->getData('ai_content_options') as $option): ?>
+                <option value="<?= $escaper->escapeHtmlAttr((string)$option['value']) ?>"
+                    <% if ((data.ai_content || <?= /* @noEscape */ $aiContentNoneJs ?>)
+                        == <?= /* @noEscape */ json_encode($option['value']) ?>) { %>selected="selected"<% } %>>
+                    <?= $escaper->escapeHtml($option['label']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+        <div class="admin__field-note"><?= $escaper->escapeHtml(__('Applies to all store views.')) ?></div>
+    </div>
+</div>
+
+<div class="admin__field field-ai-hint-color"
+     data-role="ai-hint-color-field"
+     <% if (!data.ai_content
+         || data.ai_content == <?= /* @noEscape */ $aiContentNoneJs ?>) { %>style="display: none;"<% } %>>
+    <label class="admin__field-label">
+        <span><?= $escaper->escapeHtml(__('AI hint colour')) ?></span>
+    </label>
+    <div class="admin__field-control">
+        <select class="admin__control-select" data-role="ai-hint-color" data-field="ai_hint_color">
+            <?php foreach ($block->getData('ai_hint_color_options') as $option): ?>
+                <option value="<?= $escaper->escapeHtmlAttr((string)$option['value']) ?>"
+                    <% if ((data.ai_hint_color || <?= /* @noEscape */ $aiHintColorDefaultJs ?>)
+                        === <?= /* @noEscape */ json_encode($option['value']) ?>) { %>selected="selected"<% } %>>
+                    <?= $escaper->escapeHtml($option['label']) ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </div>
+</div>

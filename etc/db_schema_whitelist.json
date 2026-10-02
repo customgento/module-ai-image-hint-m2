@@ -1,0 +1,11 @@
+{
+    "catalog_product_entity_media_gallery": {
+        "column": {
+            "ai_content": true,
+            "ai_hint_color": true
+        },
+        "index": {
+            "CATALOG_PRODUCT_ENTITY_MEDIA_GALLERY_VALUE": true
+        }
+    }
+}

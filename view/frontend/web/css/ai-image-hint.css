@@ -1,0 +1,53 @@
+/*
+ * EU AI Act hint icon, overlaid on a product image. Plain CSS so it works in any theme; override these
+ * rules in your theme to move or resize the icon.
+ * The SVG viewBoxes are cropped to the artwork, so each height below is the visible icon height. Sizes are
+ * in px, not rem: Luma's root font size is 10px, Hyvä's 16px.
+ */
+/* scales with its image, so it never covers much of a small thumbnail (minicart, checkout): the percentages
+   are of the image container, the badge's containing block */
+.ai-image-hint {
+    position: absolute;
+    right: clamp(2px, 4%, 8px);
+    bottom: clamp(2px, 4%, 8px);
+    z-index: 10;
+    width: auto;
+    height: clamp(12px, 18%, 24px);
+}
+
+.ai-image-hint--full {
+    right: 12px;
+    bottom: 12px;
+    height: 18px;
+}
+
+.ai-image-hint--thumb {
+    right: 4px;
+    bottom: 4px;
+    height: 16px;
+}
+
+@media (min-width: 768px) {
+    .ai-image-hint--full {
+        height: 20px;
+    }
+}
+
+/* wraps the theme's own image markup together with the badge, sized to the image */
+.ai-image-hint-wrap {
+    position: relative;
+    display: inline-block;
+    max-width: 100%;
+    vertical-align: top;
+    line-height: 0;
+}
+
+/* an existing image container the badge is added to */
+.ai-image-hint-host {
+    position: relative;
+}
+
+/* Luma floats the thumbnail of the checkout order summary, the wrapper now takes that place */
+.minicart-items .product > .ai-image-hint-wrap {
+    float: left;
+}
