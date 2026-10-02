@@ -14,6 +14,9 @@ class AddAiHintToMinicartImagePlugin
 {
     private const CORE_TEMPLATE = 'Magento_Catalog/product/image_with_borders';
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterGetImageHtmlTemplate(Sidebar $subject, string $result): string
     {
         return $result === self::CORE_TEMPLATE ? 'CustomGento_AiImageHint/minicart-image' : $result;

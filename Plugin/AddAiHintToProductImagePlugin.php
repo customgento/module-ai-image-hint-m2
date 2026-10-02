@@ -27,7 +27,12 @@ class AddAiHintToProductImagePlugin
     ) {
     }
 
-    // ponytail: one indexed query per distinct file on an uncached listing page; preload per collection if that gets slow
+    /**
+     * ponytail: one indexed query per distinct file on an uncached listing page; preload per collection if that
+     * gets slow
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterCreate(ImageFactory $subject, Image $result, Product $product, string $imageId): Image
     {
         return $result->setData('ai_image_hint', $this->aiImageHint->getHintForProductImage($product, $imageId));

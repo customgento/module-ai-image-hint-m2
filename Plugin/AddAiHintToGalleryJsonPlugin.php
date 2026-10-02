@@ -62,7 +62,10 @@ class AddAiHintToGalleryJsonPlugin
 
         $hints = [];
         foreach ($images as $image) {
-            $hints[] = $this->aiImageHint->getHint((int)$image->getData('ai_content'), $image->getData('ai_hint_color'));
+            $hints[] = $this->aiImageHint->getHint(
+                (int)$image->getData('ai_content'),
+                $image->getData('ai_hint_color')
+            );
         }
 
         return array_filter($hints) ? $hints : [];

@@ -29,12 +29,11 @@ class SaveAiFlagsPlugin
     ) {
     }
 
-    public function afterExecute(
-        CreateHandler $subject,
-        Product $result,
-        Product $product,
-        array $arguments = []
-    ): Product {
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function afterExecute(CreateHandler $subject, Product $result, Product $product): Product
+    {
         if ($product->getIsDuplicate() || $product->isLockedAttribute('media_gallery')) {
             // a duplicate is handled by GalleryResourcePlugin::afterDuplicate, the value ids here still point at the
             // original; a locked gallery core did not save either

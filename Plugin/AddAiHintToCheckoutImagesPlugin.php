@@ -23,11 +23,16 @@ class AddAiHintToCheckoutImagesPlugin
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterGetImages(ImageProvider $subject, array $result, mixed $cartId): array
     {
         // the quote core just loaded for the same images, cached by the repository; no item options needed here
         foreach ($this->quoteRepository->getActive($cartId)->getAllVisibleItems() as $item) {
-            $hint = isset($result[$item->getItemId()]) ? $this->aiImageHint->getCartItemHint($item, self::IMAGE_ID) : null;
+            $hint = isset($result[$item->getItemId()])
+                ? $this->aiImageHint->getCartItemHint($item, self::IMAGE_ID)
+                : null;
             if ($hint) {
                 $result[$item->getItemId()]['ai_image_hint'] = $hint;
             }

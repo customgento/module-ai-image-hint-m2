@@ -21,6 +21,9 @@ class AddAiHintToCartItemDataPlugin
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
     public function afterGetItemData(ItemInterface $subject, array $result, Item $item): array
     {
         $hint = isset($result['product_image']) ? $this->aiImageHint->getCartItemHint($item, self::IMAGE_ID) : null;
