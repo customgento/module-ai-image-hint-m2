@@ -18,24 +18,37 @@ use Hyva\Theme\ViewModel\HyvaCsp;
 (() => {
     'use strict';
 
-    const badge = (src, alt, size) => {
+    // Alpine's CSP build evaluates plain property paths only, so the badges read their hint through this magic:
+    // the cart item, the thumbnail or the active gallery image, whichever the badge sits in
+    document.addEventListener('alpine:init', () => {
+        Alpine.magic('aiHint', (el) => {
+            const {item, image, images, active} = Alpine.$data(el);
+            const hint = item ? item.product_image?.ai_image_hint
+                : image ? image.aiMark && {icon: image.aiMark, alt: image.aiAlt}
+                : images?.[active]?.aiIcon && {icon: images[active].aiIcon, alt: images[active].aiAlt};
+
+            return hint ? {show: true, icon: hint.icon, alt: hint.alt} : {show: false, icon: '', alt: ''};
+        });
+    });
+
+    const badge = (size) => {
         const template = document.createElement('template');
-        template.setAttribute('x-if', src);
-        template.innerHTML = `<img class="ai-image-hint ${size}" :src="${src}" :alt="${alt}" :title="${alt}">`;
+        template.setAttribute('x-if', '$aiHint.show');
+        template.innerHTML = `<img class="ai-image-hint ${size}" :src="$aiHint.icon" :alt="$aiHint.alt"`
+            + ' :title="$aiHint.alt">';
         return template;
     };
 
-    document.getElementById('gallery-main')
-        ?.append(badge('images[active]?.aiIcon', 'images[active]?.aiAlt', 'ai-image-hint--full'));
+    document.getElementById('gallery-main')?.append(badge('ai-image-hint--full'));
 
     // x-for / x-if contents are document fragments of their own, nested templates included
     const patch = (root) => root.querySelectorAll('template').forEach(({content}) => {
         content.querySelectorAll('img[\\:src="image.thumb"]').forEach((img) => {
-            img.after(badge('image.aiMark', 'image.aiAlt', 'ai-image-hint--thumb'));
+            img.after(badge('ai-image-hint--thumb'));
         });
         content.querySelectorAll('img[\\:src="item.product_image.src"]').forEach((img) => {
             img.parentElement.classList.add('ai-image-hint-host');
-            img.after(badge('item.product_image.ai_image_hint?.icon', 'item.product_image.ai_image_hint?.alt', ''));
+            img.after(badge(''));
         });
         patch(content);
     });

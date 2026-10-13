@@ -13,15 +13,15 @@ use Magento\Framework\Data\OptionSourceInterface;
 class AiContent implements OptionSourceInterface
 {
     public const NONE = 0;
-    public const GENERATED = 1;
-    public const MODIFIED = 2;
+    public const MODIFIED = 1;
+    public const GENERATED = 2;
 
     public function toOptionArray(): array
     {
         return [
             ['value' => self::NONE, 'label' => __('No AI used')],
-            ['value' => self::GENERATED, 'label' => __('AI generated')],
             ['value' => self::MODIFIED, 'label' => __('AI modified')],
+            ['value' => self::GENERATED, 'label' => __('AI generated')],
         ];
     }
 

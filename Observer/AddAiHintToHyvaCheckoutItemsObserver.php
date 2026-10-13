@@ -55,21 +55,24 @@ class AddAiHintToHyvaCheckoutItemsObserver implements ObserverInterface
 
     /**
      * Thumbnail url, escaped as the template prints it => badge html, for the labelled items of the quote.
+     * The label is per product, so items of products sharing an image file may differ in it.
      */
     private function getBadgesByThumbnailUrl(): array
     {
         $badges = [];
         foreach ($this->checkoutSession->getQuote()->getAllVisibleItems() as $item) {
             $product = $this->itemResolver->getFinalProduct($item);
-            $hint = $product instanceof Product
-                ? $this->aiImageHint->getHintForProductImage($product, self::IMAGE_ID)
-                : null;
-            if ($hint) {
-                $url = $this->imageHelper->init($product, self::IMAGE_ID)->getUrl();
-                $badges[$this->escaper->escapeUrl($url)] = $this->aiImageHint->getBadgeHtml($hint);
+            if (!$product instanceof Product) {
+                continue;
             }
+            $badge = $this->aiImageHint->getBadgeHtml(
+                $this->aiImageHint->getHintForProductImage($product, self::IMAGE_ID)
+            );
+            $url = $this->escaper->escapeUrl($this->imageHelper->init($product, self::IMAGE_ID)->getUrl());
+            // one url, several items with different labels: their <img>s cannot be told apart, so none gets a badge
+            $badges[$url] = isset($badges[$url]) && $badges[$url] !== $badge ? '' : $badge;
         }
 
-        return $badges;
+        return array_filter($badges);
     }
 }

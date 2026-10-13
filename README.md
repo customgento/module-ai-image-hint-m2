@@ -27,7 +27,7 @@ bin/magento setup:upgrade
 
 1. Go to *Catalog > Products*, edit a product, open *Images And Videos*.
 2. Click an image to open *Image Detail*.
-3. Set **AI labelling**: *No AI used*, *AI generated* or *AI modified*.
+3. Set **AI labelling**: *No AI used*, *AI modified* or *AI generated*.
 4. Pick the **AI hint colour**: black or white.
 5. Save the product.
 
