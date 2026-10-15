@@ -7,6 +7,7 @@ namespace CustomGento\AiImageHint\Plugin;
 use CustomGento\AiImageHint\ViewModel\AiImageHint;
 use Magento\Checkout\Model\Cart\ImageProvider;
 use Magento\Quote\Api\CartRepositoryInterface;
+use Magento\Quote\Model\Quote;
 
 /**
  * Adds the hint to window.checkoutConfig.imageData, which the Luma checkout order summary renders its
@@ -29,7 +30,11 @@ class AddAiHintToCheckoutImagesPlugin
     public function afterGetImages(ImageProvider $subject, array $result, mixed $cartId): array
     {
         // the quote core just loaded for the same images, cached by the repository; no item options needed here
-        foreach ($this->quoteRepository->getActive($cartId)->getAllVisibleItems() as $item) {
+        $quote = $this->quoteRepository->getActive($cartId);
+        if (!$quote instanceof Quote) {
+            return $result;
+        }
+        foreach ($quote->getAllVisibleItems() as $item) {
             $hint = isset($result[$item->getItemId()])
                 ? $this->aiImageHint->getCartItemHint($item, self::IMAGE_ID)
                 : null;

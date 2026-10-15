@@ -44,9 +44,8 @@ class AddAiFieldsToAdminGalleryPlugin
 
     private function render(Content $subject, string $template, array $data): string
     {
-        return $subject->getLayout()->createBlock(Template::class)
-            ->setTemplate('CustomGento_AiImageHint::helper/' . $template . '.phtml')
-            ->addData($data)
-            ->toHtml();
+        $data['template'] = 'CustomGento_AiImageHint::helper/' . $template . '.phtml';
+
+        return $subject->getLayout()->createBlock(Template::class, '', ['data' => $data])->toHtml();
     }
 }

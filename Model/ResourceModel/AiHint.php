@@ -6,6 +6,7 @@ namespace CustomGento\AiImageHint\Model\ResourceModel;
 
 use CustomGento\AiImageHint\Model\Source\AiContent;
 use Magento\Catalog\Model\ResourceModel\Product\Gallery;
+use Magento\Framework\DB\Adapter\AdapterInterface;
 use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
@@ -19,6 +20,19 @@ class AiHint extends AbstractDb
     protected function _construct(): void
     {
         $this->_init(Gallery::GALLERY_TABLE, 'value_id');
+    }
+
+    /**
+     * Core returns false for a resource model without a connection, which this one never is.
+     */
+    public function getConnection(): AdapterInterface
+    {
+        $connection = parent::getConnection();
+        if (!$connection) {
+            throw new \LogicException('The media gallery table has no database connection.');
+        }
+
+        return $connection;
     }
 
     /**

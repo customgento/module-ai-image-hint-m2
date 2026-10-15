@@ -25,7 +25,12 @@ class AiImageHintTest extends TestCase
     {
         $resource = $this->createMock(AiHint::class);
         $resource->expects($this->once())->method('getByProducts')->with('entity_id', [1, 2])->willReturn([
-            ['link' => '1', 'value' => '/r/i/ring.jpg', 'ai_content' => AiContent::GENERATED, 'ai_hint_color' => 'white'],
+            [
+                'link' => '1',
+                'value' => '/r/i/ring.jpg',
+                'ai_content' => AiContent::GENERATED,
+                'ai_hint_color' => 'white',
+            ],
         ]);
         $resource->expects($this->never())->method('getByFile');
 
@@ -36,7 +41,7 @@ class AiImageHintTest extends TestCase
         // a product loaded twice, as by a second collection, is not fetched again
         $viewModel->preload([$ring]);
 
-        $this->assertSame('white', $viewModel->getHintForFile($ring, '/r/i/ring.jpg')['color']);
+        $this->assertSame('white', $viewModel->getHintForFile($ring, '/r/i/ring.jpg')['color'] ?? null);
         $this->assertNull($viewModel->getHintForFile($ring, '/r/i/other.jpg'));
         $this->assertNull($viewModel->getHintForFile($plain, '/p/l/plain.jpg'));
     }
@@ -49,7 +54,7 @@ class AiImageHintTest extends TestCase
 
         $hint = $this->createViewModel($resource)->getHintForFile($this->product(3), '/r/i/ring.jpg');
 
-        $this->assertSame(AiContent::MODIFIED, $hint['type']);
+        $this->assertSame(AiContent::MODIFIED, $hint['type'] ?? null);
     }
 
     private function createViewModel(AiHint $resource): AiImageHint

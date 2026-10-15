@@ -40,7 +40,7 @@ class HyvaCheckoutItems implements ArgumentInterface
             static fn (array $img): string => $img[0]
                 . (preg_match('/\ssrc="([^"]*)"/', $img[0], $src) ? $badges[$src[1]] ?? '' : ''),
             $html
-        );
+        ) ?? $html;
     }
 
     /**
