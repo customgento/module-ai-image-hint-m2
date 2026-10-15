@@ -28,8 +28,7 @@ class AddAiHintToProductImagePlugin
     }
 
     /**
-     * ponytail: one indexed query per distinct file on an uncached listing page; preload per collection if that
-     * gets slow
+     * A product of a listing was preloaded with its collection (see PreloadAiHintsObserver), so this needs no query.
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */

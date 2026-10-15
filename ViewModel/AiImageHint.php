@@ -25,6 +25,8 @@ class AiImageHint implements ArgumentInterface
 {
     // "link id|file" => hint, or false for a file we looked up and found no label for
     private array $hints = [];
+    // link id => true for products whose labels preload() fetched, so a file missing from $hints has none
+    private array $preloaded = [];
 
     public function __construct(
         private readonly AiHint $aiHintResource,
@@ -65,17 +67,44 @@ class AiImageHint implements ArgumentInterface
         if (!$file || $file === 'no_selection') {
             return null;
         }
-        $linkField = $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
+        $linkField = $this->getLinkField();
         $linkFieldValue = (int)$product->getData($linkField);
         $key = $linkFieldValue . '|' . $file;
         if (!array_key_exists($key, $this->hints)) {
-            $row = $this->aiHintResource->getByFile($file, $linkField, $linkFieldValue);
+            $row = isset($this->preloaded[$linkFieldValue])
+                ? null
+                : $this->aiHintResource->getByFile($file, $linkField, $linkFieldValue);
             $this->hints[$key] = $row
                 ? $this->getHint((int)$row['ai_content'], $row['ai_hint_color']) ?? false
                 : false;
         }
 
         return $this->hints[$key] ?: null;
+    }
+
+    /**
+     * Fetches the labels of all given products in one query, so getHintForFile() answers them from memory.
+     * Called for every product collection the storefront loads, see PreloadAiHintsObserver.
+     */
+    public function preload(iterable $products): void
+    {
+        $linkField = $this->getLinkField();
+        $linkFieldValues = [];
+        foreach ($products as $product) {
+            $linkFieldValue = (int)$product->getData($linkField);
+            if ($linkFieldValue && !isset($this->preloaded[$linkFieldValue])) {
+                $linkFieldValues[] = $linkFieldValue;
+            }
+        }
+        if (!$linkFieldValues) {
+            return;
+        }
+
+        foreach ($this->aiHintResource->getByProducts($linkField, $linkFieldValues) as $row) {
+            $this->hints[$row['link'] . '|' . $row['value']] =
+                $this->getHint((int)$row['ai_content'], $row['ai_hint_color']) ?? false;
+        }
+        $this->preloaded += array_fill_keys($linkFieldValues, true);
     }
 
     /**
@@ -136,6 +165,11 @@ class AiImageHint implements ArgumentInterface
         $hint = $product instanceof Product ? $this->getHintForProductImage($product, $imageId) : null;
 
         return $hint ? ['icon' => $this->iconUrl('ai-mark', $hint['color']), 'alt' => $hint['alt']] : null;
+    }
+
+    private function getLinkField(): string
+    {
+        return $this->metadataPool->getMetadata(ProductInterface::class)->getLinkField();
     }
 
     private function iconUrl(string $name, string $color): string

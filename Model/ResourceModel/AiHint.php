@@ -45,6 +45,27 @@ class AiHint extends AbstractDb
         return $row ?: null;
     }
 
+    /**
+     * Every labelled row of several products' galleries in one query, with the product's link field value as
+     * "link". For product listings, which would otherwise ask getByFile once per product.
+     */
+    public function getByProducts(string $linkField, array $linkFieldValues): array
+    {
+        $connection = $this->getConnection();
+
+        return $connection->fetchAll(
+            $connection->select()
+                ->from(['gallery' => $this->getMainTable()], array_merge(['value'], self::COLUMNS))
+                ->join(
+                    ['entity' => $this->getTable(Gallery::GALLERY_VALUE_TO_ENTITY_TABLE)],
+                    'entity.value_id = gallery.value_id',
+                    ['link' => $linkField]
+                )
+                ->where('gallery.ai_content > ?', AiContent::NONE)
+                ->where('entity.' . $linkField . ' IN (?)', $linkFieldValues)
+        );
+    }
+
     public function saveFlags(int $valueId, int $type, string $color): void
     {
         $this->getConnection()->update(
