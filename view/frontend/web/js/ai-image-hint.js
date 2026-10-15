@@ -3,15 +3,20 @@
  * another image in its place, and shows it again when the image comes back. Plain script, so it runs in Luma and
  * Hyvä alike. The swapped in image's own hint is not shown yet.
  *
- * Images are compared by gallery file, so a CDN host, an image cache size or a WebP copy of the same file still
- * counts as that image. A src that is no product image at all, like a lazy loader's placeholder, changes nothing.
+ * Images are compared by gallery file, so a CDN or custom media host, an image cache size or a WebP copy of the
+ * same file (example.webp or example.jpg.webp) still counts as that image. A src whose file cannot be told, like a
+ * lazy loader's placeholder or an image service that rewrites the path, changes nothing on purpose: a label too many
+ * on a real photo is harmless, a missing one on an AI image is not.
  */
 (function () {
     'use strict';
 
-    // "/a/b/example" of ".../media/catalog/product[/cache/<hash>]/a/b/example.jpg", '' for any other url
+    // "/a/b/example" of ".../catalog/product[/cache/<hash>]/a/b/example.jpg[.webp]", '' for any other url; only
+    // image extensions are stripped, so "my.ring.jpg" and "my.other.jpg" stay two files
+    var FILE = /\/catalog\/product(?:\/cache\/[0-9a-f]{32})?(\/[^?#]+?)(?:\.(?:jpe?g|png|gif|webp|avif))*(?:[?#]|$)/i;
+
     function fileOf(url) {
-        var match = /\/media\/catalog\/product(?:\/cache\/[0-9a-f]{32})?(\/[^?#]+?)(?:\.\w+)?(?:[?#]|$)/.exec(url || '');
+        var match = FILE.exec(url || '');
 
         return match ? match[1] : '';
     }
