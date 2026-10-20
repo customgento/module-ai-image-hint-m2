@@ -33,6 +33,8 @@ bin/magento setup:upgrade
 
 The label applies to all store views.
 
+![AI labelling and AI hint colour fields in the admin Image Detail panel](docs/images/admin-area.png)
+
 ## Features
 
 - Label each product image in the admin
@@ -54,6 +56,26 @@ The label applies to all store views.
 - Wishlist and compare pages
 
 The icon sits bottom right, away from Sale / New labels.
+
+**Product page**
+
+![Full "AI modified" label below the main product image](docs/images/product-page.png)
+
+**Category page**
+
+![AI mark on labelled products in the category listing](docs/images/product-listing.png)
+
+**Minicart**
+
+![AI mark on the product thumbnail in the minicart](docs/images/minicart.png)
+
+**Cart**
+
+![AI mark on the product image in the shopping cart](docs/images/cart.png)
+
+**Checkout**
+
+![AI mark on the product thumbnail in the checkout order summary](docs/images/checkout.png)
 
 ## Not covered yet
 
