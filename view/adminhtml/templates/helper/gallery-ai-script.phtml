@@ -1,0 +1,64 @@
+<?php
+
+declare(strict_types=1);
+
+use CustomGento\AiImageHint\Model\Source\AiContent;
+use CustomGento\AiImageHint\Model\Source\HintColor;
+use Magento\Catalog\Block\Adminhtml\Product\Helper\Form\Gallery\Content;
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
+/**
+ * Keeps the AI hint selects of the Image Detail modal and the product form in step. The modal is redrawn from the
+ * image's data, so a change goes there; the form posts hidden inputs, which are added for a changed image only, as
+ * images[<id>][ai_hint]. A product saved any other way (API, import, ...) posts no ai_hint and keeps its labels.
+ *
+ * @var Template $block
+ * @var Escaper $escaper
+ * @var SecureHtmlRenderer $secureRenderer
+ */
+
+/** @var Content $gallery */
+$gallery = $block->getData('gallery');
+$config = json_encode([
+    'gallery' => '#' . $gallery->getHtmlId(),
+    'name' => $gallery->getElement()->getName() . '[images]',
+    'form' => $gallery->getFormName(),
+    'defaults' => ['ai_content' => AiContent::NONE, 'ai_hint_color' => HintColor::BLACK],
+], JSON_THROW_ON_ERROR | JSON_HEX_TAG);
+$script = <<<JS
+require(['jquery'], function ($) {
+    'use strict';
+
+    var config = $config;
+
+    $('body').on('change', '[data-role=ai-content], [data-role=ai-hint-color]', function () {
+        var field = $(this),
+            dialog = field.closest('[data-role=dialog]'),
+            imageData = dialog.data('imageData'),
+            gallery = $(config.gallery);
+
+        if (!imageData) {
+            return;
+        }
+        imageData[field.data('field')] = field.val();
+
+        $.each(config.defaults, function (key, fallback) {
+            var name = config.name + '[' + imageData.file_id + '][ai_hint][' + key + ']',
+                input = gallery.find('input[name="' + name + '"]');
+
+            if (!input.length) {
+                input = $('<input type="hidden">').attr({name: name, 'data-form-part': config.form}).appendTo(gallery);
+            }
+            input.val(imageData[key] || fallback);
+        });
+
+        if (field.data('role') === 'ai-content') {
+            dialog.find('[data-role=ai-hint-color-field]').toggle(field.val() != config.defaults.ai_content);
+        }
+    });
+});
+JS;
+?>
+<?= /* @noEscape */ $secureRenderer->renderTag('script', [], $script, false) ?>

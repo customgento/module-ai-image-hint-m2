@@ -1,0 +1,7 @@
+<!-- Luma checkout order summary thumbnail: core's template plus the badge, $parents[1] is the item as in core's -->
+<span class="ai-image-hint-wrap">
+    <!-- ko template: 'Magento_Checkout/summary/item/details/thumbnail' --><!-- /ko -->
+    <!-- ko with: getImageItem($parents[1]).ai_image_hint -->
+    <img class="ai-image-hint" loading="lazy" data-bind="attr: {src: icon, alt: alt, title: alt}"/>
+    <!-- /ko -->
+</span>

@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="catalog_product_entity_media_gallery">
+        <column xsi:type="smallint" name="ai_content" unsigned="true" nullable="false" identity="false"
+                default="0"/>
+        <column xsi:type="varchar" name="ai_hint_color" nullable="true" length="8"/>
+        <index referenceId="CATALOG_PRODUCT_ENTITY_MEDIA_GALLERY_VALUE" indexType="btree">
+            <column name="value"/>
+        </index>
+    </table>
+</schema>

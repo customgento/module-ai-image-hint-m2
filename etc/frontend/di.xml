@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="Magento\Checkout\CustomerData\ItemInterface">
+        <plugin name="customgento_ai_image_hint_cart_item_data"
+                type="CustomGento\AiImageHint\Plugin\AddAiHintToCartItemDataPlugin"/>
+    </type>
+    <type name="Magento\Catalog\Block\Product\ImageFactory">
+        <plugin name="customgento_ai_image_hint_product_image"
+                type="CustomGento\AiImageHint\Plugin\AddAiHintToProductImagePlugin"/>
+    </type>
+    <type name="Magento\Catalog\Block\Product\Image">
+        <plugin name="customgento_ai_image_hint_product_image"
+                type="CustomGento\AiImageHint\Plugin\AddAiHintToProductImagePlugin"/>
+    </type>
+    <type name="Magento\Checkout\Block\Cart\Sidebar">
+        <plugin name="customgento_ai_image_hint_minicart_image"
+                type="CustomGento\AiImageHint\Plugin\AddAiHintToMinicartImagePlugin"/>
+    </type>
+    <type name="Magento\Checkout\Model\Cart\ImageProvider">
+        <plugin name="customgento_ai_image_hint_checkout_images"
+                type="CustomGento\AiImageHint\Plugin\AddAiHintToCheckoutImagesPlugin"/>
+    </type>
+</config>

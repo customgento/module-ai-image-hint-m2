@@ -1,0 +1,28 @@
+{
+    "name": "customgento/module-ai-image-hint-m2",
+    "description": "EU AI Act image labelling: mark product images as AI generated / AI modified and show the official EU hint icon in Luma and Hyvä, no theme changes.",
+    "type": "magento2-module",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Team CustomGento",
+            "email": "info@customgento.com"
+        }
+    ],
+    "require": {
+        "ext-json": "*",
+        "magento/framework": "^103.0",
+        "magento/module-catalog": "^104.0",
+        "magento/module-checkout": "^100.4",
+        "magento/module-quote": "^101.2",
+        "php": "~8.2.0||~8.3.0||~8.4.0||~8.5.0"
+    },
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "CustomGento\\AiImageHint\\": ""
+        }
+    }
+}

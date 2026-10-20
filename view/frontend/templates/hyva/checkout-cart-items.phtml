@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * Renders Hyvä Checkout's own order summary items template, through the theme fallback, and adds the AI mark to
+ * its thumbnails. $magewire and $viewModels reach the inner template as they would the original.
+ */
+
+$html = $block->fetchView($block->getTemplateFile('Hyva_Checkout::checkout/price-summary/cart-items.phtml'));
+?>
+<?= /* @noEscape */ $block->getData('ai_image_hint')->addBadges($html) ?>
