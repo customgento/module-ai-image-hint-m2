@@ -12,7 +12,8 @@ Magento has no way to flag AI images. This module adds it. It is a tool, not leg
 
 ## Requirements
 
-- Magento 2.4 with Luma or a Luma based theme
+- Magento 2.4 with Luma or a Luma based theme, or
+- Magento 2.4 with Hyvä or a Hyvä based theme
 - PHP 8.2 - 8.5
 
 ## Installation
