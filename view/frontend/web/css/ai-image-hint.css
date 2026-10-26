@@ -21,6 +21,12 @@
     height: 18px;
 }
 
+/* Hyvä 1.5+ gallery slide: sits just above the slider arrows while they are shown in its corner (nav "end",
+   40px buttons 8px from the bottom), they are hidden for a single image */
+#gallery:has(.bottom-2.end-2 > [data-next]:not([hidden], [style*="display: none"])) .ai-image-hint--slide {
+    bottom: 56px;
+}
+
 .ai-image-hint--thumb {
     right: 4px;
     bottom: 4px;

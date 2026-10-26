@@ -9,7 +9,9 @@ use Hyva\Theme\ViewModel\HyvaCsp;
  * Adds the AI hint to the Alpine templates of the Hyvä product gallery and cart drawer. This runs while the page is
  * parsed, before Alpine (a deferred module script) starts, so Alpine renders the badge as if the theme template had
  * it. Main gallery image: images[active].aiIcon, thumbnails: image.aiMark (see AddAiHintToGalleryJsonPlugin), cart
- * drawer: item.product_image.ai_image_hint (see AddAiHintToCartItemDataPlugin).
+ * drawer: item.product_image.ai_image_hint (see AddAiHintToCartItemDataPlugin). The Hyvä 1.5+ gallery renders its
+ * slides on the server, so there the badges are added to the slides and the lightbox once Alpine has read the
+ * gallery JSON.
  *
  * @var ViewModelRegistry $viewModels
  */
@@ -39,7 +41,53 @@ use Hyva\Theme\ViewModel\HyvaCsp;
         return template;
     };
 
-    document.getElementById('gallery-main')?.append(badge('ai-image-hint--full'));
+    const icon = (src, alt, size) => Object.assign(document.createElement('img'), {
+        src, alt, title: alt, className: `ai-image-hint ${size}`,
+    });
+
+    // Hyvä 1.5+ snap slider: slides and pager thumbs are server rendered, main image first, so each one is
+    // matched to its gallery JSON entry by the large image url
+    const slider = document.querySelector('#gallery[data-slider-type="gallery"]');
+    if (slider) {
+        document.addEventListener('alpine:initialized', () => {
+            const gallery = Alpine.$data(slider);
+            const images = gallery.initImages || [];
+            images.forEach(({full, aiIcon, aiMark, aiAlt}) => {
+                const slide = aiIcon && [...slider.querySelectorAll('[data-track] [data-img-src]')]
+                    .find((button) => button.dataset.imgSrc === full)?.parentElement;
+                if (!slide) {
+                    return;
+                }
+                slide.append(icon(aiIcon, aiAlt, 'ai-image-hint--full ai-image-hint--slide'));
+
+                // no image with the "dots" pager, and Hyvä shows the thumb image from lg up only, so the mark does too
+                const thumb = slider.querySelector(`[data-pager] a[href="#${slide.id}"]`);
+                if (thumb?.querySelector('img')) {
+                    thumb.classList.add('ai-image-hint-host');
+                    thumb.append(icon(aiMark, aiAlt, 'ai-image-hint--thumb hidden lg:block'));
+                }
+            });
+
+            // the lightbox shows the large image of the slide it was opened or paged to, lightbox.src is its url
+            const lightboxImage = slider.querySelector('dialog img[\\:src="lightbox.src"]');
+            if (!lightboxImage || !images.some(({aiIcon}) => aiIcon)) {
+                return;
+            }
+            const wrap = Object.assign(document.createElement('span'), {className: 'ai-image-hint-wrap'});
+            const lightboxBadge = icon('', '', 'ai-image-hint--full');
+            lightboxImage.replaceWith(wrap);
+            wrap.append(lightboxImage, lightboxBadge);
+            Alpine.effect(() => {
+                const hint = images.find(({full, aiIcon}) => aiIcon && full === gallery.lightbox.src);
+                lightboxBadge.hidden = !hint;
+                if (hint) {
+                    Object.assign(lightboxBadge, {src: hint.aiIcon, alt: hint.aiAlt, title: hint.aiAlt});
+                }
+            });
+        });
+    } else {
+        document.getElementById('gallery-main')?.append(badge('ai-image-hint--full'));
+    }
 
     // x-for / x-if contents are document fragments of their own, nested templates included
     const patch = (root) => root.querySelectorAll('template').forEach(({content}) => {
